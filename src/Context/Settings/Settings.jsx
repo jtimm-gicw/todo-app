@@ -1,42 +1,95 @@
-// Import React and useState hook
-import React, { useState } from 'react';
+// Import React and hooks
+import React, { useContext } from 'react';
 
-// Create a Context object for app-wide settings
-// This allows child components to access settings without prop drilling
-export const SettingsContext = React.createContext();  // must include .createContext()
+// Import SettingsContext so we can access and update global settings
+import { SettingsContext } from '../../Context/Settings/Settings';
 
-// Provider component wraps part of the app and supplies settings state
-const SettingsProvider = ({ children }) => {
-  // --------- State Variables ---------
-  // Whether completed tasks should be shown or hidden
-  const [showCompleted, setShowCompleted] = useState(false);
+// Import custom form hook to handle input changes and form submission
+import useForm from '../../hooks/form';
 
-  // How many items should be shown per page (for pagination)
-  const [pageItems, setPageItems] = useState(3);
+// Import Mantine UI components for layout and styling
+import { Card, TextInput, Switch, Button, Text, Grid } from '@mantine/core';
 
-  // Sorting preference for tasks (default is "difficulty")
-  const [sort, setSort] = useState('difficulty');
+// Main page component that lets users view + update app settings
+const SettingsPage = () => {
+  // Pull current settings and updater functions from context
+  const { showCompleted, pageItems, setShowCompleted, setPageItems, saveSettings } =
+    useContext(SettingsContext);
 
-  // --------- Context Values ---------
-  // These values + setters will be passed down to all consumers
-  let values = {
-    showCompleted,   // boolean
-    pageItems,       // number of items per page
-    sort,            // sorting rule
-    setShowCompleted, // function to update showCompleted
-    setPageItems,     // function to update pageItems
-    setSort           // function to update sort
+  // Set initial values for the form using current context values
+  const defaultValues = { showCompleted, pageItems };
+
+  // useForm() gives us:
+  // - handleChange: updates local form state when inputs change
+  // - handleSubmit: handles form submit event
+  // - values: current form field values
+  const { handleChange, handleSubmit, values } = useForm(updateSettings, defaultValues);
+
+  // Function called on form submission
+  function updateSettings(newValues) {
+    // Update context values with new form data
+    setShowCompleted(newValues.showCompleted);
+    setPageItems(newValues.pageItems);
+
+    // Save the new settings to localStorage immediately
+    // Passing newValues ensures we save the updated state (not stale state)
+    saveSettings(newValues);
   }
 
-  // --------- Provide Context ---------
-  // Wrap children in the SettingsContext.Provider
-  // Any component inside <SettingsProvider> can use useContext(SettingsContext)
-  return(
-    <SettingsContext.Provider value={values}>
-      {children}
-    </SettingsContext.Provider>
-  )
+  return (
+    // Use Mantine's Grid layout to split screen into two columns (form + preview)
+    <Grid style={{ width: '80%', margin: 'auto' }}>
+      
+      {/* ----- Left Column: Settings Form ----- */}
+      <Grid.Col xs={12} sm={6}>
+        <Card withBorder p="md">
+          {/* Wrap inputs in a form so handleSubmit is triggered on submit */}
+          <form onSubmit={handleSubmit}>
+            <Text>Show Completed Items?</Text>
+
+            {/* Switch input toggles showCompleted true/false */}
+            {/* We manually format event so useForm understands name/value */}
+            <Switch
+              name="showCompleted"
+              checked={values.showCompleted}
+              onChange={(event) =>
+                handleChange({
+                  target: {
+                    name: 'showCompleted',
+                    value: event.currentTarget.checked,
+                  },
+                })
+              }
+            />
+
+            {/* Numeric input for pageItems setting */}
+            <Text mt="md">Items per Page</Text>
+            <TextInput
+              type="number"
+              name="pageItems"
+              value={values.pageItems}
+              onChange={handleChange}
+              min={1}
+              max={20}
+            />
+
+            {/* Submit button saves settings */}
+            <Button type="submit" mt="md">Save Settings</Button>
+          </form>
+        </Card>
+      </Grid.Col>
+
+      {/* ----- Right Column: Live Preview of Current Settings ----- */}
+      <Grid.Col xs={12} sm={6}>
+        <Card withBorder p="md">
+          <Text weight={500}>Current Settings:</Text>
+          <Text>Show Completed: {values.showCompleted ? 'Yes' : 'No'}</Text>
+          <Text>Items per Page: {values.pageItems}</Text>
+        </Card>
+      </Grid.Col>
+    </Grid>
+  );
 };
 
-// Export so we can wrap our App (or specific parts of it) in SettingsProvider
-export default SettingsProvider;
+// Export so App.js (or Router) can render this page
+export default SettingsPage;
