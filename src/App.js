@@ -1,37 +1,27 @@
-// Import React base library
-import React from 'react';
-
-// Import routing utilities
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-// Import child components
-import ToDo from './Components/ToDo/ToDo';
+import { useContext } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './Components/Header/Header';
+import ToDo from './Components/ToDo/ToDo';
+import SettingsForm from './Components/SettingsForm/SettingsForm';
+import { AuthContext } from './Context/Auth/Auth';
+import { When } from 'react-if';
+import Footer from './Components/Footer/Footer';
 
-// Import SettingsPage from the folder — since the file is index.js (or index.jsx)
-// bundlers will resolve './Components/SettingsPage' -> './Components/SettingsPage/index.js'
-import SettingsPage from './Components/SettingsPage';
+const App = () => {
+  const { isLoggedIn } = useContext(AuthContext)
 
-// App component defined as a class component (instead of functional component + hooks)
-// This serves as the root component of your app (after being rendered in index.js)
-export default class App extends React.Component {
-  // Class components must have a render() method that returns JSX
-  render() {
-    return (
-      // Wrap app in Router so we can define routes for / and /settings
-      <Router>
-        {/* Header component (likely the top navigation or title bar) */}
-        <Header />
-
-        {/* Routes define the pages in the app */}
+  return (
+    <BrowserRouter>
+      <Header />
+      <When condition={isLoggedIn}>
         <Routes>
-          {/* Home route — the ToDo app */}
           <Route path="/" element={<ToDo />} />
-
-          {/* Settings route — your settings page */}
-          <Route path="/settings" element={<SettingsPage />} />
+          <Route path='/settings' element={<SettingsForm />} />
         </Routes>
-      </Router>
-    );
-  }
-}
+      </When>
+      <Footer />
+    </BrowserRouter>
+  );
+};
+
+export default App;
