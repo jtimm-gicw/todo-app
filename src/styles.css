@@ -1,0 +1,83 @@
+/* GLOBAL STYLES: accessible contrast, spacious layout, and responsive cards. */
+:root { font-synthesis: none; text-rendering: optimizeLegibility; }
+body { background: #f5f7fc; color: #17233e; }
+.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+.main-content { flex: 1; padding: 36px 0 72px; }
+.page-content { animation: enter 340ms ease-out; }
+@keyframes enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HEADER: slim navigation with clear active-state indicators. */
+.site-header { background: #ffffff; border-bottom: 1px solid #e9edf5; position: relative; z-index: 1; }
+.header-inner { min-height: 76px; padding: 12px 0; }
+.brand { display: inline-flex; gap: 10px; align-items: center; text-decoration: none; font-size: 23px; font-weight: 850; letter-spacing: -1px; color: #17213f; }
+.brand-symbol { display: inline-flex; padding: 8px; border-radius: 12px; background: #4f46e5; color: white; }
+.brand-dot { color: #6253e8; }
+.nav-link { display: inline-flex; align-items: center; gap: 7px; text-decoration: none; border-radius: 9px; padding: 9px 11px; color: #66718d; font-size: 14px; font-weight: 650; }
+.nav-link:hover, .nav-link-active { color: #4942bc; background: #f0effe; }
+.username-label { font-weight: 650; }
+.site-footer { border-top: 1px solid #e9edf5; background: white; padding: 24px 0; }
+
+/* DASHBOARD HERO: modern gradient, progress indicator, large headline. */
+.hero-panel { display: flex; gap: 32px; justify-content: space-between; align-items: center; border-radius: 24px; padding: 40px 44px; color: white; background: radial-gradient(circle at 78% 12%, #433d9a 0, transparent 45%), linear-gradient(115deg, #152348, #20205d 65%, #343089); overflow: hidden; box-shadow: 0 16px 40px rgba(24,35,92,.14); }
+.hero-panel h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.18; letter-spacing: -1.8px; }
+.hero-panel h1 span { color: #8ae8db; }
+.hero-subtitle { color: #cdd5f4; max-width: 450px; }
+.hero-progress { flex: 0 0 220px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; padding: 22px; background: rgba(255,255,255,.09); }
+.hero-progress h2 { font-size: 32px; margin-top: 4px; }
+.hero-progress .mantine-Progress-root { background: rgba(255,255,255,.25); }
+.metric-card, .panel-card { background: #fff; border-color: #e7ebf5 !important; box-shadow: 0 5px 22px rgba(26,41,91,.035); }
+.metric-card { transition: transform .2s, box-shadow .2s; }
+.metric-card:hover { transform: translateY(-3px); box-shadow: 0 11px 27px rgba(26,41,91,.08); }
+.metric-card h2 { font-size: 31px; letter-spacing: -1px; }
+.metric-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; }
+.metric-indigo { background: #eeedff; color: #5851d5; }
+.metric-orange { background: #fff1df; color: #c57820; }
+.metric-teal { background: #e0f8ef; color: #138267; }
+.section-icon { border-radius: 10px; padding: 7px; background: #eaeaff; display: inline-flex; color: #554ddb; }
+
+/* TASKS: compact interactive cards with an obvious completed state. */
+.task-card { background: #fff; border-color: #e6eaf4 !important; transition: border-color .2s, transform .2s, box-shadow .2s; }
+.task-card:hover { border-color: #c9cbef !important; box-shadow: 0 8px 22px rgba(33,45,90,.06); transform: translateY(-1px); }
+.task-name { overflow-wrap: anywhere; font-size: 15px; }
+.task-done { background: #f8fcfa; }
+.task-done .task-name { color: #647a74; text-decoration: line-through; }
+.task-dot { margin-top: 7px; width: 15px; height: 15px; background: #cad1df; border-radius: 50%; flex: 0 0 auto; }
+.empty-state { text-align: center; padding: 52px 16px !important; border-style: dashed !important; background: #fafbff; }
+.empty-icon { background: #edefff; color: #5650cb; border-radius: 20px; margin: 0 auto 18px; width: 70px; height: 70px; display: grid; place-items: center; }
+.page-heading { margin-bottom: 28px; }
+.page-heading h1 { letter-spacing: -1px; font-size: clamp(28px, 4vw, 38px); }
+.setting-line { padding: 13px 0; border-bottom: 1px solid #eef0f5; display: flex; justify-content: space-between; gap: 10px; }
+.settings-preview { background: #fafbff; height: 100%; }
+
+/* LOGIN: a two-panel welcome view with friendly onboarding. */
+.auth-layout { display: grid; grid-template-columns: 1fr 430px; gap: 46px; align-items: center; max-width: 1120px; margin: 30px auto 0; }
+.auth-feature { min-height: 480px; padding: 60px 44px; border-radius: 28px; color: #fff; background: radial-gradient(circle at 100% 0%, #5143b2, transparent 50%), linear-gradient(135deg, #152548, #242366); }
+.auth-title { font-size: clamp(35px, 4.4vw, 58px); line-height: 1.15; letter-spacing: -2px; margin-top: 32px; }
+.auth-title span { color: #94ebdf; }
+.auth-description { color: #cdd4ef; margin-top: 18px; max-width: 410px; }
+.auth-example { margin-top: 46px; display: flex; gap: 16px; align-items: center; border-radius: 18px; padding: 18px; background: rgba(255,255,255,.1); }
+.auth-example p { margin: 4px 0 0; color: #cfd6f1; font-size: 13px; }
+.example-check { height: 42px; width: 42px; border-radius: 13px; display: grid; place-items: center; background: #55baa9; font-size: 24px; }
+.auth-trust { color: #cbd5ed; margin-top: 28px; font-size: 12px; }
+.auth-card { border: 1px solid #e7ebf5; }
+.auth-card h2 { font-size: 28px; letter-spacing: -0.7px; }
+
+/* SMALL SCREENS: stack panels; never hide controls behind horizontal scrolling. */
+@media (max-width: 900px) {
+  .auth-layout { grid-template-columns: 1fr; gap: 20px; max-width: 620px; }
+  .auth-feature { min-height: 0; padding: 30px; }
+  .auth-example, .auth-trust { display: none; }
+  .auth-title { margin-top: 20px; }
+}
+@media (max-width: 650px) {
+  .main-content { padding: 20px 0 45px; }
+  .hero-panel { padding: 28px 24px; display: block; }
+  .hero-progress { margin-top: 25px; }
+  .header-inner { gap: 8px; }
+  .username-label { display: none; }
+  .nav-link { padding: 7px; font-size: 12px; }
+  .site-footer .mantine-Group-root { justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

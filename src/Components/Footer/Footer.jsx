@@ -1,11 +1,18 @@
-import { Text } from '@mantine/core';
+/**
+ * Footer with app name and current year.
+ * This is presentation only: no application state lives here.
+ */
+import { Container, Group, Text } from '@mantine/core';
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer style={{width: '80%', margin: 'auto'}}>
-      <Text align="right" mt="lg" >&copy;2025 ITTP</Text>
+    <footer className="site-footer">
+      <Container size="xl">
+        <Group justify="space-between" gap="xs">
+          <Text size="xs" c="dimmed">Daymark · React Context + Mantine + PostgreSQL</Text>
+          <Text size="xs" c="dimmed">© {new Date().getFullYear()} · Built for Code 401</Text>
+        </Group>
+      </Container>
     </footer>
-  )
-};
-
-export default Footer
+  );
+}
