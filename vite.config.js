@@ -9,6 +9,8 @@ export default defineConfig({
     proxy: { '/api': 'http://localhost:3001' },
   },
   test: {
+    // Only run frontend tests: the server has its own Node test runner.
+    include: ['src/**/*.test.{js,jsx}'],
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
     globals: true,

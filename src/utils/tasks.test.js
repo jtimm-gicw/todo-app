@@ -25,7 +25,7 @@ describe('task display logic', () => {
   it('sorts by assignee and searches task text', () => {
     const sorted = getVisibleTasks(tasks, { sort: 'assignee' });
     expect(sorted[0].assignee).toBe('Amy');
-    expect(getVisibleTasks(tasks, { query: 'STYLE' }).map((item) => item.id)).toEqual(['e']);
+    expect(getVisibleTasks(tasks, { query: 'STYL' }).map((item) => item.id)).toEqual(['e']);
   });
 
   it('supports 3 per page and clamps invalid pages', () => {
