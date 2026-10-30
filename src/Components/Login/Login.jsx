@@ -28,9 +28,9 @@ export default function Login() {
   return (
     <div className="auth-layout">
       <div className="auth-feature">
-        <Badge size="lg" variant="light" color="cyan" leftSection={<IconSparkles size={14} />}>A clearer way to get things done</Badge>
-        <Title order={1} className="auth-title">Make room for<br /><span>what matters.</span></Title>
-        <Text className="auth-description">Bring your tasks together, track your momentum, and make steady progress every day.</Text>
+        <Badge size="lg" variant="light" color="yellow" leftSection={<IconSparkles size={14} />}>MAKE EVERY DAY A LITTLE BRIGHTER</Badge>
+        <Title order={1} className="auth-title">A happy place<br />for <span>big ideas.</span></Title>
+        <Text className="auth-description">Turn busy days into brighter ones. Plan your tasks, build momentum, and celebrate every checkmark.</Text>
         <div className="auth-example">
           <div className="example-check">✓</div>
           <div><strong>Small steps. Big progress.</strong><p>Organize · Prioritize · Complete</p></div>
@@ -56,7 +56,7 @@ export default function Login() {
               <TextInput label="Username" placeholder="Your username" value={username} onChange={(e) => setUsername(e.currentTarget.value)} required minLength={3} maxLength={30} autoComplete="username" />
               <PasswordInput label="Password" placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'} value={password} onChange={(e) => setPassword(e.currentTarget.value)} required minLength={mode === 'signup' ? 8 : 1} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} />
               {mode === 'signup' && <Text size="xs" c="dimmed">New accounts receive the Editor role (read, create, update). Delete access is limited to admins.</Text>}
-              <Button size="md" type="submit" fullWidth loading={pending} rightSection={<IconArrowRight size={18} />}>
+              <Button className="auth-submit-button" size="md" type="submit" fullWidth loading={pending} rightSection={<IconArrowRight size={18} />}>
                 {mode === 'signup' ? 'Create account' : 'Sign in'}
               </Button>
             </Stack>

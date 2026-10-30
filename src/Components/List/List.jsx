@@ -3,7 +3,7 @@
  * Reads global display settings and protects update/delete actions by role.
  */
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Badge, Button, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
+import { ActionIcon, Badge, Group, Pagination, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconCheck, IconClipboardList, IconRotate, IconTrash } from '@tabler/icons-react';
 import { SettingsContext } from '../../Context/Settings/Settings';
 import { getVisibleTasks, paginate } from '../../utils/tasks';
@@ -11,7 +11,7 @@ import Auth from '../Auth/Auth';
 
 // BADGE COLORS: quick visual indication of the item's difficulty.
 function difficultyColor(level) {
-  return level >= 4 ? 'red' : level >= 3 ? 'orange' : 'teal';
+  return level >= 5 ? 'pink' : level >= 4 ? 'violet' : level >= 3 ? 'yellow' : level >= 2 ? 'cyan' : 'teal';
 }
 
 export default function List({ list, query, status, toggleComplete, deleteItem, busy }) {
@@ -25,12 +25,16 @@ export default function List({ list, query, status, toggleComplete, deleteItem, 
   // RESET PAGINATION: changes to settings/search start again at page 1.
   useEffect(() => { setPage(1); }, [pageItems, showCompleted, sort, query, status]);
 
+  // EMPTY STATE: encouragement depends on whether tasks are done or filtered out.
   if (!visible.length) {
+    const allDone = list.length > 0 && list.every((item) => item.complete);
     return (
       <Paper className="empty-state" radius="xl" p="xl" withBorder>
         <div className="empty-icon"><IconClipboardList size={34} /></div>
-        <Title order={3}>Nothing on this list yet</Title>
-        <Text c="dimmed" mt="xs">Try a different filter, or add a task to get started.</Text>
+        <Title order={3}>{allDone ? 'You cleared the board! 🎉' : list.length ? 'No matches this time' : 'A fresh page for great ideas'}</Title>
+        <Text c="dimmed" mt="xs">
+          {allDone ? 'Every task is finished. Nice work!' : list.length ? 'Try another search or filter to find your tasks.' : 'Add your first task and watch the progress begin.'}
+        </Text>
       </Paper>
     );
   }
@@ -42,7 +46,7 @@ export default function List({ list, query, status, toggleComplete, deleteItem, 
         <Text c="dimmed" size="sm">Page {currentPage} of {totalPages}</Text>
       </Group>
       {items.map((item) => (
-        <Paper key={item.id} withBorder radius="lg" p="md" className={'task-card' + (item.complete ? ' task-done' : '')}>
+        <Paper key={item.id} withBorder radius="lg" p="md" className={'task-card task-difficulty-' + item.difficulty + (item.complete ? ' task-done' : '')}>
           <Group justify="space-between" gap="xs" align="flex-start" wrap="nowrap">
             <Group align="flex-start" gap="md" style={{ flex: 1, minWidth: 0 }} wrap="nowrap">
               <Auth capability="update" fallback={<span className="task-dot" aria-hidden="true" />}>
@@ -61,7 +65,7 @@ export default function List({ list, query, status, toggleComplete, deleteItem, 
               <div style={{ minWidth: 0, flex: 1 }}>
                 <Text fw={700} className="task-name">{item.text}</Text>
                 <Group gap="xs" mt="sm">
-                  <Badge variant="light" color={item.complete ? 'teal' : 'blue'}>{item.complete ? 'Completed' : 'In progress'}</Badge>
+                  <Badge variant="light" color={item.complete ? 'teal' : 'grape'}>{item.complete ? 'Completed' : 'In progress'}</Badge>
                   <Badge variant="dot" color={difficultyColor(Number(item.difficulty))}>Difficulty {item.difficulty}/5</Badge>
                 </Group>
                 <Text size="xs" c="dimmed" mt="md">Assigned to <strong>{item.assignee || 'Unassigned'}</strong></Text>

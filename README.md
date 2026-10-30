@@ -154,3 +154,18 @@ npm run build    # production client build
 - **Further production hardening:** secure HttpOnly session cookies, CSRF protection where applicable, account recovery, email verification, monitoring, persistent rate-limit storage, audited migrations, and integration tests against a test database.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for UML and individual file responsibilities.
+
+## Colorful dashboard design
+
+The playful UI refresh lives primarily in `src/styles.css`, with small presentation updates in the dashboard, task list, login, and settings components. It adds **violet, raspberry, peach, mint, and sunshine** colors; gradient hero sections; color-coded task difficulty; lively metrics; encouraging progress messages; and responsive hover effects.
+
+This is a visual-only refresh: the four lab phases, permissions, PostgreSQL API, authentication, task pagination, and user settings are unchanged. Animations respect `prefers-reduced-motion` and controls retain visible keyboard focus. To preview this design branch without merging:
+
+```bash
+git fetch origin
+git switch design/colorful-daymark
+npm install
+npm run dev
+```
+
+Run the API separately with `npm run server` as described above.
