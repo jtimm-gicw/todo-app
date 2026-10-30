@@ -1,107 +1,101 @@
-import React, { useState, useEffect } from 'react';
-import cookie from 'react-cookies';
+/**
+ * Phase 3 + Phase 4: authentication and authorization context.
+ * Users sign in via the real API, not a hard-coded credentials list.
+ * On reload, the cookie is accepted only after GET /me verifies the token.
+ * IMPORTANT: server routes MUST also check capabilities; UI checks are cosmetic.
+ */
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { apiRequest } from '../../services/api';
 
-// Correct import: jwtDecode is a named export in modern versions of jwt-decode
-import { jwtDecode } from 'jwt-decode';
+export const AuthContext = createContext(null);
+const COOKIE_NAME = 'daymark_auth';
 
-// Named export: consumers should import { AuthContext } from this module
-export const AuthContext = React.createContext();
-
-const testUsers = {
-  admin: {
-    username: 'admin',
-    password: 'ADMIN',
-    email: 'admin@fakeuser.com',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZTM1OGI1NzAzOTM2MDAxODAyYThlMSIsImNhcGFiaWxpdGllcyI6WyJjcmVhdGUiLCJ1cGRhdGUiLCJyZWFkIiwiZGVsZXRlIl0sInR5cGUiOiJ1c2VyIiwiaWF0IjoxNjU5MDY2NTQ5LCJleHAiOjE2NTkwNzAxNDl9.efsLBIA9wqw6EFx9YuS166MjWP_7vQQkM2wrRVOLlV4',
-  },
-  editor: {
-    username: 'editor',
-    password: 'EDITOR',
-    email: 'editor@fakeuser.com',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZTBlZjk5MzNjZTQ5MDAxODlmMzhiYSIsImNhcGFiaWxpdGllcyI6WyJjcmVhdGUiLCJ1cGRhdGUiLCJyZWFkIl0sInR5cGUiOiJ1c2VyIiwiaWF0IjoxNjU4OTA4NTY5LCJleHAiOjE2NTg5MTIxNjl9.073ppQCHbplYN9befn8JElcP4zgFX6TEe_ARUQZc0KU',
-  },
-  writer: {
-    username: 'writer',
-    password: 'WRITER',
-    email: 'writer@fakeuser.com',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZTBlZmUxMzNjZTQ5MDAxODlmMzhiZCIsImNhcGFiaWxpdGllcyI6W10sInR5cGUiOiJ1c2VyIiwiaWF0IjoxNjU4OTA4NjQxLCJleHAiOjE2NTg5MTIyNDF9.AUOPHDRV6z8urvmgUOyRmCYUwfeScmGdb4ztvjPMlos',
-  },
-  user: {
-    username: 'user',
-    password: 'USER',
-    email: 'user@fakeuser.com',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZTBmMGZjMzNjZTQ5MDAxODlmMzhjMCIsImNhcGFiaWxpdGllcyI6WyJyZWFkIl0sInR5cGUiOiJ1c2VyIiwiaWF0IjoxNjU4OTA4OTI0LCJleHAiOjE2NTg5MTI1MjR9.t7c7k2LbaTxsdfYjx_WC3QiP4MycU8sZryVyXQqJQH',
-  }
-};
-
-function AuthProvider({ children }) {
-  const [error, setError] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState({});
-
-  const can = (capability) => {
-    return user?.capabilities?.includes(capability);
-  };
-
-  const login = async (username, password) => {
-    const authCredentials = testUsers[username];
-    if (authCredentials && authCredentials.password === password) {
-      try {
-        _validateToken(authCredentials.token);
-      } catch (e) {
-        console.error(e);
-        setError(e);
-      }
-    } else {
-      setError('Invalid username or password');
-    }
-  };
-
-  const _validateToken = (token) => {
-    try {
-      // Use jwtDecode from the named export
-      const validUser = jwtDecode(token);
-      if (validUser) {
-        setUser(validUser);
-        setIsLoggedIn(true);
-        cookie.save('auth', token, { path: '/' });
-        setError(null);
-      }
-    } catch (e) {
-      setIsLoggedIn(false);
-      setError(e);
-    }
-  };
-
-  const logout = () => {
-    setUser({});
-    setIsLoggedIn(false);
-    setError(null);
-    cookie.remove('auth', { path: '/' });
-  };
-
-  useEffect(() => {
-    const token = cookie.load('auth');
-    if (token) {
-      _validateToken(token);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const values = {
-    error,
-    isLoggedIn,
-    user,
-    can,
-    login,
-    logout,
-  };
-
-  return (
-    <AuthContext.Provider value={values}>
-      {children}
-    </AuthContext.Provider>
-  );
+// COOKIE HELPERS: fulfill the lab cookie requirement.
+// For production, prefer HttpOnly Secure cookies set by the server to reduce XSS risk.
+function readCookie() {
+  const match = document.cookie.split('; ').find((part) => part.startsWith(COOKIE_NAME + '='));
+  return match ? decodeURIComponent(match.slice(COOKIE_NAME.length + 1)) : null;
+}
+function writeCookie(token) {
+  const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+  document.cookie = COOKIE_NAME + '=' + encodeURIComponent(token) + '; path=/; SameSite=Lax; Max-Age=604800' + secure;
+}
+function clearCookie() {
+  document.cookie = COOKIE_NAME + '=; path=/; Max-Age=0; SameSite=Lax';
 }
 
-export default AuthProvider;
+export default function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [error, setError] = useState('');
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // LOGOUT: clear both React session state and the browser cookie.
+  const logout = useCallback(() => {
+    setUser(null);
+    setToken(null);
+    setError('');
+    clearCookie();
+  }, []);
+
+  // RESTORE SESSION: a decoded JWT alone cannot prove validity.
+  useEffect(() => {
+    const savedToken = readCookie();
+    if (!savedToken) {
+      setAuthLoading(false);
+      return;
+    }
+    let active = true;
+    apiRequest('/me', { token: savedToken })
+      .then((profile) => {
+        if (active) {
+          setUser(profile.user);
+          setToken(savedToken);
+        }
+      })
+      .catch(() => { if (active) logout(); })
+      .finally(() => { if (active) setAuthLoading(false); });
+    return () => { active = false; };
+  }, [logout]);
+
+  // SIGN IN: server validates credentials and returns a short-lived JWT.
+  const login = async (username, password) => {
+    setError('');
+    try {
+      const result = await apiRequest('/signin', { method: 'POST', body: { username, password } });
+      // Verify identity and capabilities from the authenticated server response.
+      const profile = await apiRequest('/me', { token: result.token });
+      setUser(profile.user);
+      setToken(result.token);
+      writeCookie(result.token);
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  // SIGN UP: new accounts cannot choose their own privileged role.
+  const register = async (username, password) => {
+    setError('');
+    try {
+      await apiRequest('/signup', { method: 'POST', body: { username, password } });
+      return await login(username, password);
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  // CAPABILITY CHECK: used by <Auth /> and mutation controls.
+  const can = useCallback((capability) => (
+    Boolean(user && user.capabilities?.includes(capability))
+  ), [user]);
+
+  const value = useMemo(() => ({
+    user, token, error, authLoading, isLoggedIn: Boolean(user && token),
+    login, register, logout, can,
+  }), [user, token, error, authLoading, logout, can]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

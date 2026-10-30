@@ -1,45 +1,72 @@
+/**
+ * Phase 3 and 4: sign-in and account-registration screen.
+ * Credentials are sent to the API, never compared in the browser.
+ */
 import { useContext, useState } from 'react';
-import { If, Then, Else } from 'react-if';
-import { Button, Group, TextInput } from '@mantine/core';
-import useForm from '../../hooks/form.js';
+import { Alert, Badge, Button, Group, Paper, PasswordInput, SegmentedControl, Stack, Text, TextInput, Title } from '@mantine/core';
+import { IconArrowRight, IconLock, IconShieldCheck, IconSparkles } from '@tabler/icons-react';
 import { AuthContext } from '../../Context/Auth/Auth';
 
-const Login = () => {
-  const [defaultValues] = useState({})
-  const { handleChange, handleSubmit } = useForm(handleLogin, defaultValues);
-  const { isLoggedIn, login, logout } = useContext(AuthContext);
+export default function Login() {
+  const { login, register, error } = useContext(AuthContext);
+  const [mode, setMode] = useState('signin');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [pending, setPending] = useState(false);
 
-  function handleLogin(user) {
-    login(user.username, user.password);
+  // SUBMIT: registration creates an account, then signs the user in.
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setPending(true);
+    try {
+      await (mode === 'signup' ? register(username.trim(), password) : login(username.trim(), password));
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
-    <>
-      <If condition={isLoggedIn}>
-        <Then>
-          <Button color="red" onClick={logout}>Log Out</Button>
-        </Then>
-        <Else>
+    <div className="auth-layout">
+      <div className="auth-feature">
+        <Badge size="lg" variant="light" color="cyan" leftSection={<IconSparkles size={14} />}>A clearer way to get things done</Badge>
+        <Title order={1} className="auth-title">Make room for<br /><span>what matters.</span></Title>
+        <Text className="auth-description">Bring your tasks together, track your momentum, and make steady progress every day.</Text>
+        <div className="auth-example">
+          <div className="example-check">✓</div>
+          <div><strong>Small steps. Big progress.</strong><p>Organize · Prioritize · Complete</p></div>
+        </div>
+        <Group gap="xs" className="auth-trust"><IconShieldCheck size={18} /> Accounts and permissions verified by the API</Group>
+      </div>
+      <Paper radius="xl" p="xl" className="auth-card" shadow="sm">
+        <Stack gap="lg">
+          <div>
+            <Text size="sm" fw={700} c="indigo">WELCOME TO DAYMARK</Text>
+            <Title order={2} mt="xs">{mode === 'signup' ? 'Create your account' : 'Welcome back'}</Title>
+            <Text c="dimmed" size="sm" mt="xs"> {mode === 'signup' ? 'Start organizing your workspace.' : 'Sign in to view your private workspace.'} </Text>
+          </div>
+          <SegmentedControl
+            fullWidth
+            value={mode}
+            onChange={setMode}
+            data={[{ label: 'Sign in', value: 'signin' }, { label: 'Create account', value: 'signup' }]}
+          />
+          {error && <Alert color="red" title="Unable to continue">{error}</Alert>}
           <form onSubmit={handleSubmit}>
-            <Group style={{width: '500px'}}>
-            <TextInput
-              onChange={handleChange}
-              name="username"
-              placeholder="Username"
-            />
-            <TextInput
-              onChange={handleChange}
-              name="password"
-              type="password"
-              placeholder="Password"
-            />
-            <Button color="gray.8" type="submit" >Login</Button>
-            </Group>
+            <Stack gap="md">
+              <TextInput label="Username" placeholder="Your username" value={username} onChange={(e) => setUsername(e.currentTarget.value)} required minLength={3} maxLength={30} autoComplete="username" />
+              <PasswordInput label="Password" placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'} value={password} onChange={(e) => setPassword(e.currentTarget.value)} required minLength={mode === 'signup' ? 8 : 1} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} />
+              {mode === 'signup' && <Text size="xs" c="dimmed">New accounts receive the Editor role (read, create, update). Delete access is limited to admins.</Text>}
+              <Button size="md" type="submit" fullWidth loading={pending} rightSection={<IconArrowRight size={18} />}>
+                {mode === 'signup' ? 'Create account' : 'Sign in'}
+              </Button>
+            </Stack>
           </form>
-        </Else>
-      </If>
-    </>
+          <Group justify="center" gap="xs">
+            <IconLock size={15} color="var(--mantine-color-gray-6)" />
+            <Text size="xs" c="dimmed">Your tasks require a verified login.</Text>
+          </Group>
+        </Stack>
+      </Paper>
+    </div>
   );
-};
-
-export default Login;
+}

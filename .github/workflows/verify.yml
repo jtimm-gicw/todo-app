@@ -1,0 +1,29 @@
+# Continuous integration: install dependencies, test, and build on PRs.
+name: Verify Daymark
+on:
+  push:
+    branches: [main, improve/fullstack-todo-labs]
+  pull_request:
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - run: npm test
+      - run: npm run build
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+        working-directory: server
+      - run: npm test
+        working-directory: server
