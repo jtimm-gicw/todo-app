@@ -14,8 +14,9 @@ import App from './App';
 
 // THEME: colors and typography shared throughout the app.
 const theme = createTheme({
-  primaryColor: 'indigo',
-  defaultRadius: 'md',
+  // Violet matches the colorful design while preserving Mantine's accessible states.
+  primaryColor: 'violet',
+  defaultRadius: 'lg',
   fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif',
   headings: { fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' },
 });

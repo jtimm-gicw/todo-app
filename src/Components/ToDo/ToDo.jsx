@@ -6,7 +6,7 @@
  */
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Alert, Badge, Button, Card, Grid, Group, Loader, Progress, Select, SimpleGrid, Slider, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconCircleCheck, IconListCheck, IconPlus, IconSearch, IconSparkles, IconTargetArrow } from '@tabler/icons-react';
+import { IconCircleCheck, IconConfetti, IconListCheck, IconMoodSmile, IconPlus, IconSearch, IconSparkles, IconTargetArrow } from '@tabler/icons-react';
 import Auth from '../Auth/Auth';
 import List from '../List/List';
 import { AuthContext } from '../../Context/Auth/Auth';
@@ -85,20 +85,34 @@ export default function ToDo() {
     return { total: list.length, complete, open: list.length - complete, progress: list.length ? Math.round((complete / list.length) * 100) : 0 };
   }, [list]);
 
+  // ENCOURAGEMENT: change the message automatically as task progress changes.
+  const cheer = metrics.total === 0
+    ? 'A fresh start — your next win begins here!'
+    : metrics.progress === 100
+      ? 'You finished everything. Time to celebrate!'
+      : metrics.complete > 0
+        ? 'Look at you go! Keep that momentum.'
+        : 'Big wins begin with little steps. You have got this!';
+
   useEffect(() => { document.title = metrics.open + ' to do · Daymark'; }, [metrics.open]);
 
   return (
     <div className="page-content">
-      <div className="hero-panel">
+      <div className={'hero-panel' + (metrics.total > 0 && metrics.progress === 100 ? ' hero-celebration' : '')}>
+        {/* DECORATION: playful icons do not interfere with keyboard or screen-reader navigation. */}
+        <IconSparkles className="hero-spark hero-spark-one" size={31} aria-hidden="true" />
+        <IconSparkles className="hero-spark hero-spark-two" size={24} aria-hidden="true" />
         <div>
-          <Badge variant="light" color="cyan" leftSection={<IconSparkles size={14} />}>YOUR WORKSPACE</Badge>
-          <Title order={1} mt="md">Your day, <span>organized.</span></Title>
-          <Text mt="xs" className="hero-subtitle">Keep the important things moving, one task at a time.</Text>
+          <Badge variant="light" color="yellow" leftSection={<IconSparkles size={14} />}>A LITTLE PROGRESS EVERY DAY</Badge>
+          <Title order={1} mt="md">Your day, <span>full of wins.</span></Title>
+          <Text mt="xs" className="hero-subtitle">Plan something great. Check things off. Celebrate the little victories.</Text>
+          <div className="hero-motto"><IconMoodSmile size={18} aria-hidden="true" />{cheer}</div>
         </div>
         <div className="hero-progress">
-          <Text size="xs" fw={700}>OVERALL PROGRESS</Text>
+          <Group gap="xs"><IconConfetti size={17} aria-hidden="true" /><Text size="xs" fw={800}>YOUR PROGRESS</Text></Group>
           <Title order={2}>{metrics.progress}%</Title>
-          <Progress value={metrics.progress} color="cyan" size="sm" radius="xl" mt="sm" />
+          <Progress value={metrics.progress} color="teal" size="sm" radius="xl" mt="sm" aria-label="Overall completion progress" />
+          <Text className="progress-note">{metrics.complete} of {metrics.total} tasks complete</Text>
         </div>
       </div>
 
@@ -108,10 +122,10 @@ export default function ToDo() {
           { label: 'Still to do', number: metrics.open, icon: <IconTargetArrow size={22} />, color: 'orange' },
           { label: 'Completed', number: metrics.complete, icon: <IconCircleCheck size={22} />, color: 'teal' },
         ].map((metric) => (
-          <Card key={metric.label} className="metric-card" radius="lg" p="lg" withBorder>
+          <Card key={metric.label} className={'metric-card metric-' + metric.color} radius="lg" p="lg" withBorder>
             <Group justify="space-between">
               <div><Text size="sm" c="dimmed">{metric.label}</Text><Title order={2} mt={4}>{metric.number}</Title></div>
-              <div className={'metric-icon metric-' + metric.color}>{metric.icon}</div>
+              <div className="metric-icon">{metric.icon}</div>
             </Group>
           </Card>
         ))}
@@ -127,8 +141,8 @@ export default function ToDo() {
               <Text size="sm" c="dimmed" mt="sm">Your account can view tasks but cannot create them.</Text>
             </Card>
           }>
-            <Card className="panel-card" withBorder radius="xl" padding="xl">
-              <Group gap="xs" mb="lg"><span className="section-icon"><IconPlus size={19} /></span><Title order={3}>Create a task</Title></Group>
+            <Card className="panel-card create-task-panel" withBorder radius="xl" padding="xl">
+              <Group gap="xs" mb="lg"><span className="section-icon"><IconPlus size={19} /></span><Title order={3}>Add a little win ✨</Title></Group>
               <form onSubmit={addItem}>
                 <Stack gap="lg">
                   <TextInput label="Task name" placeholder="What needs to get done?" value={text} maxLength={160} onChange={(e) => setText(e.currentTarget.value)} required />
@@ -137,16 +151,16 @@ export default function ToDo() {
                     <Group justify="space-between" mb="sm"><Text size="sm" fw={600}>Difficulty</Text><Badge color="indigo" variant="light">{difficulty} / 5</Badge></Group>
                     <Slider value={difficulty} onChange={setDifficulty} min={1} max={5} step={1} marks={[{ value: 1, label: 'Easy' }, { value: 3, label: 'Medium' }, { value: 5, label: 'Hard' }]} mb="xl" />
                   </div>
-                  <Button fullWidth size="md" leftSection={<IconPlus size={19} />} type="submit" loading={busy}>Add new task</Button>
+                  <Button className="add-task-button" fullWidth size="md" leftSection={<IconPlus size={19} />} type="submit" loading={busy}>Add new task</Button>
                 </Stack>
               </form>
             </Card>
           </Auth>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 8 }}>
-          <Card className="panel-card" withBorder radius="xl" padding="lg">
+          <Card className="panel-card task-board-panel" withBorder radius="xl" padding="lg">
             <Group justify="space-between" mb="md" align="center">
-              <div><Title order={3}>Task board</Title><Text size="sm" c="dimmed">Stay focused on what comes next</Text></div>
+              <div><Title order={3}>Your task board 🌈</Title><Text size="sm" c="dimmed">A home for everything on your mind</Text></div>
               <Badge variant="light" color="indigo">{metrics.open} open</Badge>
             </Group>
             <Group grow align="flex-end" mb="lg">

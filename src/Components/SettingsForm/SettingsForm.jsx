@@ -33,9 +33,9 @@ export default function SettingsForm() {
 
   return (
     <div className="page-content">
-      <div className="page-heading">
-        <Badge variant="light" color="indigo" leftSection={<IconAdjustments size={14} />}>PERSONALIZE</Badge>
-        <Title order={1} mt="sm">Your workspace, your way.</Title>
+      <div className="page-heading settings-heading">
+        <Badge variant="light" color="pink" leftSection={<IconAdjustments size={14} />}>PERSONALIZE</Badge>
+        <Title order={1} mt="sm">Make it feel <span>yours.</span> ✨</Title>
         <Text c="dimmed" mt="xs">Choose how your task list is displayed. Changes follow you on this browser.</Text>
       </div>
       <Grid gutter="xl" align="stretch">
@@ -73,7 +73,7 @@ export default function SettingsForm() {
                   onChange={(value) => { setDraft({ ...draft, sort: value }); setSaved(false); }}
                 />
                 <Group>
-                  <Button type="submit" leftSection={<IconDeviceFloppy size={18} />}>Save preferences</Button>
+                  <Button className="save-settings-button" type="submit" leftSection={<IconDeviceFloppy size={18} />}>Save preferences</Button>
                   <Button variant="subtle" color="gray" leftSection={<IconRefresh size={17} />} onClick={handleReset}>Reset defaults</Button>
                 </Group>
                 {saved && <Alert color="teal" icon={<IconCheck size={18} />}>Preferences saved to this browser.</Alert>}

@@ -28,7 +28,7 @@ export default function Header() {
               <NavLink to="/settings" className={({ isActive }) => 'nav-link' + (isActive ? ' nav-link-active' : '')}>
                 <IconSettings size={17} /> Settings
               </NavLink>
-              <Badge color="indigo" variant="light" radius="sm">{user?.role || 'member'}</Badge>
+              <Badge color="pink" variant="light" radius="sm">{user?.role || 'member'}</Badge>
               <Text size="sm" className="username-label">{user?.username}</Text>
               <Button size="xs" variant="subtle" color="gray" leftSection={<IconLogout size={16} />} onClick={logout}>
                 Log out
