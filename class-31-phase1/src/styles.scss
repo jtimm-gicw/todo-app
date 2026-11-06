@@ -1,0 +1,119 @@
+/*
+ * FILE: styles.scss
+ * PURPOSE: Make the lab pleasant and easy to read without changing its logic.
+ *
+ * SCSS looks like CSS but lets us save colors as variables and group
+ * related styles together. Vite turns SCSS into normal browser CSS.
+ */
+
+/* STEP 1: Give the whole app a reusable set of colors. */
+$violet: #6e41c8;
+$purple-dark: #3c256f;
+$pink: #ef74a6;
+$mint: #daf7ec;
+$border: #e9e1f6;
+$background: #faf7ff;
+
+body {
+  margin: 0;
+  color: #29273a;
+  background:
+    radial-gradient(circle at 1% 6%, #e8dcff 0, transparent 30%),
+    radial-gradient(circle at 100% 14%, #ffe7ef 0, transparent 31%),
+    $background;
+  font-family: system-ui, Arial, sans-serif;
+  font-size: 17px;
+}
+
+/* STEP 2: Add a colorful introduction area above the task list. */
+.todo-banner {
+  padding: 38px 42px;
+  border-radius: 25px;
+  color: white;
+  background: linear-gradient(120deg, #6241bd, #a04cc8 60%, #db639d);
+  box-shadow: 0 17px 33px rgba(91, 59, 156, .18);
+
+  h1 {
+    color: white;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.25;
+    letter-spacing: -.7px;
+  }
+
+  .mantine-Text-root { color: #fff4ff; }
+}
+
+.banner-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 10px 15px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, .18);
+  font-weight: 650;
+  font-size: 14px;
+}
+
+/* STEP 3: Use distinct cards for the add form and task list. */
+.panel {
+  background: #fff;
+  border: 1px solid $border !important;
+  box-shadow: 0 7px 24px rgba(85, 63, 139, .06);
+}
+
+.add-panel {
+  border-top: 5px solid $pink !important;
+}
+
+.list-panel {
+  border-top: 5px solid $violet !important;
+}
+
+.panel h2 {
+  color: $purple-dark;
+}
+
+.panel .mantine-InputWrapper-label {
+  font-weight: 750;
+}
+
+/* STEP 4: Give each task its own readable card. */
+.task-card {
+  border: 1px solid $border !important;
+  border-left: 5px solid #b293e6 !important;
+  background: linear-gradient(110deg, #fff, #fdfaff);
+  transition: transform .18s, box-shadow .18s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 17px rgba(76, 53, 124, .09);
+  }
+}
+
+.task-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.task-name {
+  overflow-wrap: anywhere;
+  font-size: 17px;
+}
+
+.empty-state {
+  text-align: center;
+  background: linear-gradient(135deg, #f8eeff, #fff8f4);
+  border: 1px dashed #c4adeb !important;
+}
+
+/* STEP 5: Keep the design usable on a small screen. */
+@media (max-width: 650px) {
+  .todo-banner { padding: 26px 24px; }
+  .task-card .mantine-Group-root { flex-wrap: wrap; }
+}
+
+/* STEP 6: Respect students who prefer less animation. */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
