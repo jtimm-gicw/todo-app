@@ -113,7 +113,7 @@ export default function Todo({ appTitle }) {
           To Do List: {incomplete} items pending
         </Title>
         <Text mt="sm" size="lg">
-          One task at a time — you've got this!
+          One task at a time — you can do it!
         </Text>
         <div className="banner-hint">
           <IconClipboardList size={20} aria-hidden="true" />
