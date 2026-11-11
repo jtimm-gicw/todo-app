@@ -1,0 +1,26 @@
+# Class 31 teaching app verification.
+# Runs on the teaching branch and when opening a PR.
+name: Class 31 Phase 1 Checks
+on:
+  push:
+    branches: [teaching/class31-context-api-phase1]
+  pull_request:
+    paths:
+      - 'class-31-phase1/**'
+      - '.github/workflows/class31-phase1.yml'
+
+jobs:
+  phase1:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: class-31-phase1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - run: npm test
+      - run: npm run build
+      - run: npm run lint
