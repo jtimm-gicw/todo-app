@@ -40,7 +40,7 @@ describe('Class 32 Settings editor', () => {
     fireEvent.change(screen.getByLabelText('Tasks per page'), {
       target: { value: '4' },
     });
-    fireEvent.click(screen.getByRole('switch', { name: 'Show completed tasks' }));
+    fireEvent.click(screen.getByRole('switch', { name: /Show completed tasks/ }));
 
     // STEP 3: Before clicking Save, the preview is still 3/Hidden.
     expect(screen.getByTestId('saved-page-items')).toHaveTextContent('3');

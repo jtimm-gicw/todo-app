@@ -116,7 +116,7 @@ describe('Class 32: Todo + editable Context settings', () => {
     openSettings();
 
     // STEP 12: Switch the setting on and save it.
-    fireEvent.click(screen.getByRole('switch', { name: 'Show completed tasks' }));
+    fireEvent.click(screen.getByRole('switch', { name: /Show completed tasks/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Save preferences' }));
     expect(screen.getByTestId('saved-completed')).toHaveTextContent('Visible');
 
