@@ -1,0 +1,30 @@
+# Class 32 Phase 2: verify the teaching app on the context-methods branch.
+name: Class 32 Phase 2 Checks
+
+on:
+  push:
+    branches: [context-methods]
+  pull_request:
+    paths:
+      - 'class-32-phase2/**'
+      - '.github/workflows/class32-phase2.yml'
+
+jobs:
+  phase2:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: class-32-phase2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # STEP 1: Install required packages.
+      - run: npm install
+      # STEP 2: Confirm all behaviors with unit and integration tests.
+      - run: npm test
+      # STEP 3: Confirm Vite can build the app.
+      - run: npm run build
+      # STEP 4: Look for common JavaScript/JSX mistakes.
+      - run: npm run lint
